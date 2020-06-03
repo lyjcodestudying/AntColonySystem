@@ -69,11 +69,12 @@ int main() {
 
 	int start = 0, end = 0;
 	for (int path = 0; path < numPaths; path++) {
+		start = LightPath[path][0], end = LightPath[path][1];
 			//using an if statement could reduce the amount of computation to focus on a single (start,end) pair's shortest path finding 
 			if (!iterateCondition(start,end)) continue;
 			for (int time = 0; time < numTimes; time++) {//runing several times to gather priori knowledge of pheromone
 				for (int i = 0; i < numAnts; i++) {
-					Ants[i]->setSE(LightPath[path][0], LightPath[path][1]);
+					Ants[i]->setSE(start, end);
 				}
 				/*
 					TODO3:
