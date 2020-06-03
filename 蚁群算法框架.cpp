@@ -1,6 +1,7 @@
 #include<cmath>
 #include<iostream>
 #include<cstdlib>
+#include<fstream>
 
 #define numNodes 100
 #define numAnts 100
@@ -8,6 +9,7 @@
 #define numPaths 340
 using namespace std;
 
+char* outfilename = "";
 double Adjacent[numNodes][numNodes];
 double LightPath[numPaths][2];
 
@@ -31,6 +33,11 @@ public:
 	void UpdateLocalPathRule(int from, int to);
 	//update pheromone: follow the best path, leave its pheromone
 	void UpdateGlobalPathRule(int* shortestPath, int globalBestLength);
+	
+	//get shortestPath
+	int*** GetShortestPath() {
+		return shortestPath;
+	}
 };
 
 class ACSAnt {
@@ -39,7 +46,7 @@ class ACSAnt {
 	int endNode;
 	int curNode;
 	int allowed[numNodes];
-	int Tour[numNodes][numNodes];//record the ant's current path
+	int Tour[numNodes][numNodes];//record the ant's current path, for example Tour[2][5] = 1 means the ant had came from node2 to node5 (in that way we could reduce cycle)
 public:
 	ACSAnt(AntColonySystem acs) {
 		antColony = acs;
@@ -49,7 +56,7 @@ public:
 	int Choose();//choose next node under some rules
 	int MoveToNextNode(int nextNode);//deal with action of moving to next node
 };
-//TODO0: complete those member functions
+
 
 
 int main() {
@@ -70,28 +77,48 @@ int main() {
 	int start = 0, end = 0;
 	for (int path = 0; path < numPaths; path++) {
 		start = LightPath[path][0], end = LightPath[path][1];
-			//using an if statement could reduce the amount of computation to focus on a single (start,end) pair's shortest path finding 
-			if (!iterateCondition(start,end)) continue;
-			for (int time = 0; time < numTimes; time++) {//runing several times to gather priori knowledge of pheromone
-				for (int i = 0; i < numAnts; i++) {
-					Ants[i]->setSE(start, end);
-				}
-				/*
-					TODO3:
-					make every ants have an searching action and leave its pheromone on ACS map
-					and compare and record its shortest paths every time it runs
-				*/
+		//using an if statement could reduce the amount of computation to focus on a single (start,end) pair's shortest path finding 
+		if (!iterateCondition(start, end)) continue;
+		for (int time = 0; time < numTimes; time++) {//runing several times to gather priori knowledge of pheromone
+			for (int i = 0; i < numAnts; i++) {
+				Ants[i]->setSE(start, end);
 			}
-		
+			/*
+				TODO3:
+				make every ants have an searching action and leave its pheromone on ACS map
+				and compare and record its shortest paths every time it runs
+			*/
+		}
+
 	}
 
 	//below is post-processing
 	/*
 		TODO4: transform the current structure of path into file
 	*/
+	ofstream outfile;
+	outfile.open(outfilename, ios::app);
+	if (!outfile.is_open()) {
+		cout << "Fail To Open File : " << outfilename;
+	}
+	outfile << "shortestPath\nfromNode\tstartNode\tpath\n";
+	for (int path = 0, ***sPath = ACS->GetShortestPath(),*Path; path < numPaths; path++) {
+		start = LightPath[path][0], end = LightPath[path][1];
+		Path = sPath[start][end];
+		outfile << start << '\t' << end << '\t';
+		if (Path == nullptr) {
+			cout << "NULL\n";
+			continue;
+		}
+		for (int i = 0; i < numNodes && sPath[shart][end][i]!>-1; i++) {
+			cout << Path[i] << '\t';
+		}
+		cout << '\n';
+	}
 
 	delete ACS;
 	for (int i = 0; i < numAnts; i++) {
 		delete Ants[i];
 	}
+	system("pause");
 }
