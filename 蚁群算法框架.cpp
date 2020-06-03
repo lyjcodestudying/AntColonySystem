@@ -49,7 +49,7 @@ public:
 	int Choose();//choose next node under some rules
 	int MoveToNextNode(int nextNode);//deal with action of moving to next node
 };
-
+//TODO0: complete those member functions
 
 
 int main() {
