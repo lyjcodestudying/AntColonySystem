@@ -102,17 +102,22 @@ int main() {
 		cout << "Fail To Open File : " << outfilename;
 	}
 	outfile << "shortestPath\nfromNode\tstartNode\tpath\n";
+	cout << "shortestPath\nfromNode\tstartNode\tpath\n";
 	for (int path = 0, ***sPath = ACS->GetShortestPath(),*Path; path < numPaths; path++) {
 		start = LightPath[path][0], end = LightPath[path][1];
 		Path = sPath[start][end];
 		outfile << start << '\t' << end << '\t';
+		cout << start << '\t' << end << '\t';
 		if (Path == nullptr) {
+			outfile << "NULL\n";
 			cout << "NULL\n";
 			continue;
 		}
 		for (int i = 0; i < numNodes && sPath[shart][end][i]!>-1; i++) {
+			outfile << Path[i] << '\t';
 			cout << Path[i] << '\t';
 		}
+		outfile << '\n';
 		cout << '\n';
 	}
 
